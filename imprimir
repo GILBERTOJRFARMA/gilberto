@@ -1,0 +1,130 @@
+from dataclasses import dataclass
+import flet as ft
+import sqlite3
+import sql_funcoes as sf
+import pandas as pd
+
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+
+CONN = "sqlite:///agenda.db"
+
+engine = create_engine(CONN, echo=True)
+Session = sessionmaker(bind=engine)
+session = Session()
+
+def main(page: ft.Page):
+    page.title = "FORMULARIO DE ALUNOS"
+
+    
+        
+    # ------------------ INSERIR DADOS -------------------------------
+    def menuInserir(nomeDB, nome, sobrenome, email):
+
+        conn = sqlite3.connect(nomeDB)
+        cursor = conn.cursor()
+
+        queryInserir = f'''INSERT INTO Contatos (nome, sobrenome, email)
+        VALUES ("{nome}", "{sobrenome}", "{email}");'''
+          
+        cursor.execute(queryInserir)
+        conn.commit()
+        conn.close()
+    #--------------------------------------------------------------------    
+    
+    
+    #------------------------------ fechar janela toda---------------------------
+
+    def sair_do_programa(e):
+        page.window.close()
+
+       
+    # Inputs com labels
+    
+    nome_input = ft.TextField(label="Nome", width=630)
+    sobrenome_input = ft.TextField(label="sobrenome")#, width=200,text_align= ft.TextAlign.CENTER)
+    email_input= ft.TextField (label = "email",width=260)
+    
+    # Agrupando os inputs em uma linha
+    row = ft.Row(
+        controls=[nome_input, sobrenome_input, email_input],
+        alignment=ft.MainAxisAlignment.START,
+        spacing=10 ) # Espaçamento entre os campos
+
+   
+    
+  
+   
+    page.add(row)
+
+    page.add(
+            ft.Row(
+            [
+                ft.IconButton(
+                    icon=ft.icons.ADD,
+                    icon_color="blue400",
+                    icon_size=60,
+                    tooltip="Adiconar",
+                    on_click= menuInserir,
+                    
+                ),
+                ft.IconButton(
+                    icon=ft.icons.DELETE,
+                    icon_color="red",
+                    icon_size=60,
+                    tooltip="Deletar",
+                ),
+                ft.IconButton(
+                    icon=ft.icons.UPDATE,
+                    icon_color="roxo",
+                    icon_size=60,
+                    tooltip="Atualizar",
+                ),
+                ft.IconButton(
+                    icon=ft.icons.VISIBILITY_SHARP,
+                    icon_color="blue",
+                    icon_size=60,
+                    tooltip="Visualizar",
+                ),                
+                ft.IconButton(
+                    icon=ft.icons.PRINT,
+                    icon_color="green",
+                    icon_size=60,
+                    tooltip="Imprimir",
+                ),
+                ft.IconButton(
+                    icon=ft.icons.SEARCH,
+                    icon_color="green",
+                    icon_size=60,
+                    tooltip="pesquisar",
+                ),    
+                ft.IconButton(
+                    icon=ft.icons.EMAIL,
+                    icon_color="green",
+                    icon_size=60,
+                    tooltip="email",
+                ),
+                ft.IconButton(
+                    icon=ft.icons.CHAT,
+                    icon_color="green",
+                    icon_size=60,
+                    tooltip="whatzap",
+                ),
+                ft.IconButton(
+                    icon=ft.icons.EXIT_TO_APP,
+                    icon_color="BLUE",
+                    icon_size=60,
+                    tooltip="SAIR",
+                    on_click=sair_do_programa
+                ),
+            ]
+        ),
+    )
+    
+
+   
+
+ft.app(target=main)
